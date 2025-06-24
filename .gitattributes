@@ -1,0 +1,12 @@
+/mvnw text eol=lf
+*.cmd text eol=crlf
+# Mark frontend files as vendored
+*.html linguist-vendored
+*.css linguist-vendored
+*.js linguist-vendored
+
+# Ignore build and static resource folders
+static/** linguist-vendored
+public/** linguist-vendored
+build/** linguist-generated
+target/** linguist-generated
