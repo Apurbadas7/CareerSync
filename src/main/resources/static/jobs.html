@@ -1,0 +1,1832 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Matched Jobs</title>-->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<!--    <link rel="stylesheet" href="style.css">-->
+<!--    <style>-->
+<!--        .match-badge {-->
+<!--          width: 80px;-->
+<!--          height: 80px;-->
+<!--          border-radius: 50%;-->
+<!--          font-size: 18px;-->
+<!--          font-weight: bold;-->
+<!--          color: #fff;-->
+<!--          display: flex;-->
+<!--          align-items: center;-->
+<!--          justify-content: center;-->
+<!--          margin-bottom: 1rem;-->
+<!--        }-->
+<!--        .match-badge.bg-success { background-color: #28a745; }-->
+<!--        .match-badge.bg-warning { background-color: #ffc107; }-->
+<!--        .match-badge.bg-danger  { background-color: #dc3545; }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body class="bg-gradient">-->
+<!--<nav class="navbar navbar-expand-lg navbar-dark bg-dark">-->
+<!--    <a class="navbar-brand" href="#">ResumeMatcher</a>-->
+<!--    <div class="navbar-nav">-->
+<!--        <a class="nav-link" href="index.html">Dashboard</a>-->
+<!--        <a class="nav-link" href="resume.html">Upload Resume</a>-->
+<!--        <a class="nav-link active" href="jobs.html">Matched Jobs</a>-->
+<!--    </div>-->
+<!--</nav>-->
+
+<!--<main class="container mt-5">-->
+<!--    <div id="resumeInfo" class="card mb-4 d-none shadow-sm resume-card">-->
+<!--        <div class="card-body">-->
+<!--            <h5>Resume Details</h5>-->
+<!--            <p><strong>ID:</strong> <span id="resumeId"></span></p>-->
+<!--            <p><strong>Name:</strong> <span id="resumeName"></span></p>-->
+<!--            <p><strong>Experience:</strong> <span id="resumeExp"></span> years</p>-->
+<!--            <p><strong>Skills:</strong> <span id="resumeSkills"></span></p>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; ✅ Updated Job Result Container &ndash;&gt;-->
+<!--    <div id="jobResults" class="d-none">-->
+<!--        <div id="jobCards" class="row g-4"></div>-->
+<!--    </div>-->
+<!--</main>-->
+
+<!--&lt;!&ndash; ✅ Load Chart.js CDN for future usage (if needed) &ndash;&gt;-->
+<!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
+<!--<script src="job.js"></script>-->
+<!--</body>-->
+<!--</html>-->
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Matched Jobs | ResumeMatcher</title>-->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">-->
+<!--    <link rel="stylesheet" href="style.css">-->
+<!--    <style>-->
+<!--        .match-badge {-->
+<!--            width: 80px;-->
+<!--            height: 80px;-->
+<!--            border-radius: 50%;-->
+<!--            font-size: 18px;-->
+<!--            font-weight: bold;-->
+<!--            color: #fff;-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            justify-content: center;-->
+<!--            margin-bottom: 1rem;-->
+<!--            box-shadow: 0 4px 8px rgba(0,0,0,0.1);-->
+<!--        }-->
+<!--        .match-badge.bg-success { background-color: #28a745; }-->
+<!--        .match-badge.bg-warning { background-color: #ffc107; }-->
+<!--        .match-badge.bg-danger  { background-color: #dc3545; }-->
+
+<!--        .bg-gradient {-->
+<!--            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);-->
+<!--            min-height: 100vh;-->
+<!--        }-->
+
+<!--        .resume-card {-->
+<!--            border: none;-->
+<!--            border-radius: 12px;-->
+<!--            overflow: hidden;-->
+<!--            transition: transform 0.3s ease;-->
+<!--        }-->
+
+<!--        .resume-card:hover {-->
+<!--            transform: translateY(-5px);-->
+<!--        }-->
+
+<!--        .resume-card .card-header {-->
+<!--            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);-->
+<!--            color: white;-->
+<!--            font-weight: 600;-->
+<!--            border-bottom: none;-->
+<!--        }-->
+
+<!--        .job-card {-->
+<!--            border: none;-->
+<!--            border-radius: 12px;-->
+<!--            overflow: hidden;-->
+<!--            transition: all 0.3s ease;-->
+<!--            box-shadow: 0 4px 6px rgba(0,0,0,0.05);-->
+<!--            height: 100%;-->
+<!--        }-->
+
+<!--        .job-card:hover {-->
+<!--            transform: translateY(-5px);-->
+<!--            box-shadow: 0 10px 20px rgba(0,0,0,0.1);-->
+<!--        }-->
+
+<!--        .job-card .card-body {-->
+<!--            padding: 1.5rem;-->
+<!--        }-->
+
+<!--        .skill-tag {-->
+<!--            display: inline-block;-->
+<!--            background-color: #e9ecef;-->
+<!--            border-radius: 20px;-->
+<!--            padding: 3px 10px;-->
+<!--            margin: 2px;-->
+<!--            font-size: 0.8rem;-->
+<!--            color: #495057;-->
+<!--        }-->
+
+<!--        .fit-level-badge {-->
+<!--            padding: 5px 10px;-->
+<!--            border-radius: 20px;-->
+<!--            font-weight: 500;-->
+<!--        }-->
+
+<!--        .navbar {-->
+<!--            box-shadow: 0 2px 10px rgba(0,0,0,0.1);-->
+<!--        }-->
+
+<!--        .navbar-brand {-->
+<!--            font-weight: 700;-->
+<!--            letter-spacing: 0.5px;-->
+<!--        }-->
+
+<!--        .nav-link {-->
+<!--            font-weight: 500;-->
+<!--            padding: 0.5rem 1rem;-->
+<!--            border-radius: 8px;-->
+<!--            margin: 0 2px;-->
+<!--        }-->
+
+<!--        .nav-link:hover {-->
+<!--            background-color: rgba(255,255,255,0.1);-->
+<!--        }-->
+
+<!--        .nav-link.active {-->
+<!--            background-color: rgba(255,255,255,0.2);-->
+<!--            font-weight: 600;-->
+<!--        }-->
+
+<!--        .empty-state {-->
+<!--            text-align: center;-->
+<!--            padding: 3rem;-->
+<!--            color: #6c757d;-->
+<!--        }-->
+
+<!--        .empty-state i {-->
+<!--            font-size: 3rem;-->
+<!--            margin-bottom: 1rem;-->
+<!--            color: #adb5bd;-->
+<!--        }-->
+
+<!--        .loading-spinner {-->
+<!--            display: none;-->
+<!--            width: 3rem;-->
+<!--            height: 3rem;-->
+<!--            border-width: 0.2em;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body class="bg-gradient">-->
+<!--<nav class="navbar navbar-expand-lg navbar-dark bg-dark">-->
+<!--    <div class="container">-->
+<!--        <a class="navbar-brand" href="#">-->
+<!--            <i class="bi bi-file-earmark-person me-2"></i>ResumeMatcher-->
+<!--        </a>-->
+<!--        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">-->
+<!--            <span class="navbar-toggler-icon"></span>-->
+<!--        </button>-->
+<!--        <div class="collapse navbar-collapse" id="navbarNav">-->
+<!--            <div class="navbar-nav ms-auto">-->
+<!--                <a class="nav-link" href="index.html">-->
+<!--                    <i class="bi bi-speedometer2 me-1"></i>Dashboard-->
+<!--                </a>-->
+<!--                <a class="nav-link" href="resume.html">-->
+<!--                    <i class="bi bi-upload me-1"></i>Upload Resume-->
+<!--                </a>-->
+<!--                <a class="nav-link active" href="jobs.html">-->
+<!--                    <i class="bi bi-briefcase me-1"></i>Matched Jobs-->
+<!--                </a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</nav>-->
+
+<!--<main class="container py-4">-->
+<!--    &lt;!&ndash; Loading Spinner &ndash;&gt;-->
+<!--    <div id="loadingSpinner" class="text-center my-5">-->
+<!--        <div class="spinner-border text-primary loading-spinner" role="status">-->
+<!--            <span class="visually-hidden">Loading...</span>-->
+<!--        </div>-->
+<!--        <p class="mt-3 text-muted">Finding your perfect job matches...</p>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Resume Info Section &ndash;&gt;-->
+<!--    <div id="resumeInfo" class="card mb-4 shadow-sm resume-card d-none">-->
+<!--        <div class="card-header">-->
+<!--            <h5 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>Resume Details</h5>-->
+<!--        </div>-->
+<!--        <div class="card-body">-->
+<!--            <div class="row">-->
+<!--                <div class="col-md-6">-->
+<!--                    <p><strong><i class="bi bi-person me-2"></i>Name:</strong> <span id="resumeName"></span></p>-->
+<!--                    <p><strong><i class="bi bi-clock-history me-2"></i>Experience:</strong> <span id="resumeExp"></span> years</p>-->
+<!--                </div>-->
+<!--                <div class="col-md-6">-->
+<!--                    <p><strong><i class="bi bi-file-earmark me-2"></i>ID:</strong> <span id="resumeId"></span></p>-->
+<!--                    <p><strong><i class="bi bi-tools me-2"></i>Skills:</strong> <span id="resumeSkills"></span></p>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Job Results Section &ndash;&gt;-->
+<!--    <div id="jobResults" class="d-none">-->
+<!--        <div class="d-flex justify-content-between align-items-center mb-4">-->
+<!--            <h4 class="mb-0"><i class="bi bi-briefcase me-2"></i>Matched Jobs</h4>-->
+<!--            <span class="badge bg-primary rounded-pill" id="jobCount">0 jobs</span>-->
+<!--        </div>-->
+
+<!--        <div id="emptyState" class="empty-state">-->
+<!--            <i class="bi bi-briefcase"></i>-->
+<!--            <h4>No jobs found</h4>-->
+<!--            <p>We couldn't find any jobs matching your resume. Try uploading a different resume or check back later.</p>-->
+<!--        </div>-->
+
+<!--        <div id="jobCards" class="row g-4"></div>-->
+<!--    </div>-->
+<!--</main>-->
+
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
+<!--<script>-->
+<!--    document.addEventListener("DOMContentLoaded", () => {-->
+<!--        // Show loading spinner-->
+<!--        document.querySelector('.loading-spinner').style.display = 'block';-->
+
+<!--        const resumeData = JSON.parse(localStorage.getItem("resumeData"));-->
+
+<!--        if (!resumeData) {-->
+<!--            alert("⚠️ Please upload your resume first.");-->
+<!--            window.location.href = "resume.html";-->
+<!--            return;-->
+<!--        }-->
+
+<!--        // Display Resume Info-->
+<!--        document.getElementById("resumeInfo").classList.remove("d-none");-->
+<!--        document.getElementById("resumeId").innerText = resumeData.id;-->
+<!--        document.getElementById("resumeName").innerText = resumeData.name || "N/A";-->
+<!--        document.getElementById("resumeExp").innerText = resumeData.experience || "0";-->
+
+<!--        // Format skills as tags-->
+<!--        const skillsContainer = document.getElementById("resumeSkills");-->
+<!--        skillsContainer.innerHTML = '';-->
+<!--        if (resumeData.skills && resumeData.skills.length > 0) {-->
+<!--            resumeData.skills.forEach(skill => {-->
+<!--                const skillTag = document.createElement('span');-->
+<!--                skillTag.className = 'skill-tag';-->
+<!--                skillTag.textContent = skill;-->
+<!--                skillsContainer.appendChild(skillTag);-->
+<!--            });-->
+<!--        } else {-->
+<!--            skillsContainer.textContent = '-';-->
+<!--        }-->
+
+<!--        // Fetch and show jobs-->
+<!--        fetchMatchedJobs(resumeData.id);-->
+<!--    });-->
+
+<!--    function fetchMatchedJobs(resumeId) {-->
+<!--        fetch(`http://localhost:8080/resumes/${resumeId}/match-jobs`)-->
+<!--            .then(res => {-->
+<!--                if (!res.ok) throw new Error("Error fetching matched jobs");-->
+<!--                return res.json();-->
+<!--            })-->
+<!--            .then(jobs => {-->
+<!--                const jobResults = document.getElementById("jobResults");-->
+<!--                const jobCards = document.getElementById("jobCards");-->
+<!--                const emptyState = document.getElementById("emptyState");-->
+<!--                const jobCount = document.getElementById("jobCount");-->
+
+<!--                // Hide loading spinner-->
+<!--                document.querySelector('.loading-spinner').style.display = 'none';-->
+
+<!--                jobCards.innerHTML = "";-->
+
+<!--                if (!jobs || jobs.length === 0) {-->
+<!--                    jobResults.classList.remove("d-none");-->
+<!--                    emptyState.classList.remove("d-none");-->
+<!--                    return;-->
+<!--                }-->
+
+<!--                jobResults.classList.remove("d-none");-->
+<!--                emptyState.classList.add("d-none");-->
+<!--                jobCount.textContent = `${jobs.length} ${jobs.length === 1 ? 'job' : 'jobs'}`;-->
+
+<!--                jobs.forEach(job => {-->
+<!--                    const match = job.matchPercentage.toFixed(0);-->
+<!--                    let color = "bg-success";-->
+<!--                    if (match < 50) color = "bg-danger";-->
+<!--                    else if (match < 75) color = "bg-warning";-->
+
+<!--                    const card = document.createElement("div");-->
+<!--                    card.className = "col-md-4";-->
+
+<!--                    // Create skill tags-->
+<!--                    let skillTags = '';-->
+<!--                    if (job.requiredSkills && job.requiredSkills.length > 0) {-->
+<!--                        job.requiredSkills.forEach(skill => {-->
+<!--                            skillTags += `<span class="skill-tag">${skill}</span>`;-->
+<!--                        });-->
+<!--                    } else {-->
+<!--                        skillTags = '<span class="text-muted">No skills specified</span>';-->
+<!--                    }-->
+
+<!--                    card.innerHTML = `-->
+<!--                        <div class="card h-100 job-card">-->
+<!--                            <div class="card-body text-center">-->
+<!--                                <div class="match-badge ${color} mx-auto">${match}%</div>-->
+<!--                                <h5 class="card-title">${job.title}</h5>-->
+<!--                                <p class="text-muted mb-2"><i class="bi bi-building"></i> ${job.company || "N/A"}</p>-->
+
+<!--                                <div class="mb-3">-->
+<!--                                    ${skillTags}-->
+<!--                                </div>-->
+
+<!--                                <span class="fit-level-badge bg-light text-dark">-->
+<!--                                    <i class="bi bi-arrow-up-right"></i> ${job.fitLevel}-->
+<!--                                </span>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    `;-->
+<!--                    jobCards.appendChild(card);-->
+<!--                });-->
+<!--            })-->
+<!--            .catch(err => {-->
+<!--                console.error("❌ Error loading matched jobs:", err);-->
+<!--                document.querySelector('.loading-spinner').style.display = 'none';-->
+<!--                alert("❌ Could not load matched jobs. Please try again.");-->
+<!--            });-->
+<!--    }-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Matched Jobs | ResumeMatcher Pro</title>-->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">-->
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">-->
+<!--    <style>-->
+<!--        :root {-->
+<!--            &#45;&#45;primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);-->
+<!--            &#45;&#45;secondary-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);-->
+<!--            &#45;&#45;card-gradient: linear-gradient(to bottom right, #ffffff 0%, #f8f9fa 100%);-->
+<!--            &#45;&#45;dark-blue: #2c3e50;-->
+<!--            &#45;&#45;accent-color: #4a6ee0;-->
+<!--        }-->
+
+<!--        body {-->
+<!--            background: var(&#45;&#45;secondary-gradient);-->
+<!--            min-height: 100vh;-->
+<!--            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;-->
+<!--            color: #333;-->
+<!--        }-->
+
+<!--        /* Animated Background */-->
+<!--        .bg-animated {-->
+<!--            position: fixed;-->
+<!--            top: 0;-->
+<!--            left: 0;-->
+<!--            width: 100%;-->
+<!--            height: 100%;-->
+<!--            z-index: -1;-->
+<!--            background: var(&#45;&#45;secondary-gradient);-->
+<!--            overflow: hidden;-->
+<!--        }-->
+
+<!--        .bg-animated::before {-->
+<!--            content: "";-->
+<!--            position: absolute;-->
+<!--            width: 300%;-->
+<!--            height: 300%;-->
+<!--            top: -100%;-->
+<!--            left: -50%;-->
+<!--            background-image:-->
+<!--                radial-gradient(circle at 30% 30%, rgba(74, 110, 224, 0.1) 0%, transparent 20%),-->
+<!--                radial-gradient(circle at 70% 70%, rgba(102, 126, 234, 0.1) 0%, transparent 20%);-->
+<!--            animation: rotate 60s linear infinite;-->
+<!--        }-->
+
+<!--        @keyframes rotate {-->
+<!--            0% { transform: rotate(0deg); }-->
+<!--            100% { transform: rotate(360deg); }-->
+<!--        }-->
+
+<!--        /* Navbar */-->
+<!--        .navbar {-->
+<!--            background: var(&#45;&#45;primary-gradient) !important;-->
+<!--            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);-->
+<!--            padding: 0.8rem 1rem;-->
+<!--        }-->
+
+<!--        .navbar-brand {-->
+<!--            font-weight: 700;-->
+<!--            font-size: 1.5rem;-->
+<!--            letter-spacing: 0.5px;-->
+<!--            color: white !important;-->
+<!--        }-->
+
+<!--        .nav-link {-->
+<!--            font-weight: 500;-->
+<!--            padding: 0.5rem 1.2rem !important;-->
+<!--            border-radius: 8px;-->
+<!--            margin: 0 3px;-->
+<!--            color: rgba(255, 255, 255, 0.9) !important;-->
+<!--            transition: all 0.3s ease;-->
+<!--        }-->
+
+<!--        .nav-link:hover {-->
+<!--            background-color: rgba(255, 255, 255, 0.15);-->
+<!--            transform: translateY(-2px);-->
+<!--        }-->
+
+<!--        .nav-link.active {-->
+<!--            background-color: rgba(255, 255, 255, 0.25);-->
+<!--            font-weight: 600;-->
+<!--            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);-->
+<!--        }-->
+
+<!--        /* Main Content */-->
+<!--        .container {-->
+<!--            position: relative;-->
+<!--            z-index: 1;-->
+<!--        }-->
+
+<!--        /* Resume Card */-->
+<!--        .resume-card {-->
+<!--            border: none;-->
+<!--            border-radius: 16px;-->
+<!--            overflow: hidden;-->
+<!--            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);-->
+<!--            background: var(&#45;&#45;card-gradient);-->
+<!--            transform: translateY(0);-->
+<!--            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);-->
+<!--            margin-bottom: 2rem;-->
+<!--        }-->
+
+<!--        .resume-card:hover {-->
+<!--            transform: translateY(-5px);-->
+<!--            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);-->
+<!--        }-->
+
+<!--        .resume-card .card-header {-->
+<!--            background: var(&#45;&#45;primary-gradient);-->
+<!--            color: white;-->
+<!--            font-weight: 600;-->
+<!--            font-size: 1.2rem;-->
+<!--            padding: 1.2rem 1.5rem;-->
+<!--            border-bottom: none;-->
+<!--        }-->
+
+<!--        .resume-card .card-body {-->
+<!--            padding: 1.8rem;-->
+<!--        }-->
+
+<!--        /* Job Cards */-->
+<!--        .job-card {-->
+<!--            border: none;-->
+<!--            border-radius: 16px;-->
+<!--            overflow: hidden;-->
+<!--            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);-->
+<!--            background: var(&#45;&#45;card-gradient);-->
+<!--            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);-->
+<!--            height: 100%;-->
+<!--            opacity: 0;-->
+<!--            transform: translateY(20px);-->
+<!--            animation: fadeInUp 0.6s forwards;-->
+<!--            animation-delay: calc(var(&#45;&#45;animation-order) * 0.1s);-->
+<!--        }-->
+
+<!--        @keyframes fadeInUp {-->
+<!--            to {-->
+<!--                opacity: 1;-->
+<!--                transform: translateY(0);-->
+<!--            }-->
+<!--        }-->
+
+<!--        .job-card:hover {-->
+<!--            transform: translateY(-8px) !important;-->
+<!--            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);-->
+<!--        }-->
+
+<!--        .job-card .card-body {-->
+<!--            padding: 1.8rem;-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            height: 100%;-->
+<!--        }-->
+
+<!--        /* Match Badge */-->
+<!--        .match-badge {-->
+<!--            width: 90px;-->
+<!--            height: 90px;-->
+<!--            border-radius: 50%;-->
+<!--            font-size: 20px;-->
+<!--            font-weight: bold;-->
+<!--            color: white;-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            justify-content: center;-->
+<!--            margin: 0 auto 1.5rem;-->
+<!--            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);-->
+<!--            transition: all 0.3s ease;-->
+<!--        }-->
+
+<!--        .match-badge.bg-success {-->
+<!--            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);-->
+<!--        }-->
+<!--        .match-badge.bg-warning {-->
+<!--            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);-->
+<!--        }-->
+<!--        .match-badge.bg-danger {-->
+<!--            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);-->
+<!--        }-->
+
+<!--        .job-card:hover .match-badge {-->
+<!--            transform: scale(1.1);-->
+<!--        }-->
+
+<!--        /* Skills Tags */-->
+<!--        .skill-tag {-->
+<!--            display: inline-block;-->
+<!--            background-color: #f1f3f5;-->
+<!--            border-radius: 20px;-->
+<!--            padding: 5px 12px;-->
+<!--            margin: 4px;-->
+<!--            font-size: 0.85rem;-->
+<!--            color: #495057;-->
+<!--            transition: all 0.2s ease;-->
+<!--        }-->
+
+<!--        .job-card:hover .skill-tag {-->
+<!--            background-color: #e9ecef;-->
+<!--            transform: translateY(-2px);-->
+<!--        }-->
+
+<!--        /* Fit Level Badge */-->
+<!--        .fit-level-badge {-->
+<!--            padding: 6px 14px;-->
+<!--            border-radius: 20px;-->
+<!--            font-weight: 600;-->
+<!--            background: rgba(74, 110, 224, 0.1);-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            margin-top: auto;-->
+<!--            align-self: center;-->
+<!--            transition: all 0.3s ease;-->
+<!--        }-->
+
+<!--        .job-card:hover .fit-level-badge {-->
+<!--            background: rgba(74, 110, 224, 0.2);-->
+<!--            transform: scale(1.05);-->
+<!--        }-->
+
+<!--        /* Loading Animation */-->
+<!--        .loading-container {-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            align-items: center;-->
+<!--            justify-content: center;-->
+<!--            height: 60vh;-->
+<!--        }-->
+
+<!--        .loading-spinner {-->
+<!--            width: 4rem;-->
+<!--            height: 4rem;-->
+<!--            border-width: 0.25rem;-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--        }-->
+
+<!--        .loading-text {-->
+<!--            font-size: 1.2rem;-->
+<!--            color: var(&#45;&#45;dark-blue);-->
+<!--            margin-top: 1.5rem;-->
+<!--            font-weight: 500;-->
+<!--            text-align: center;-->
+<!--        }-->
+
+<!--        .loading-subtext {-->
+<!--            color: #6c757d;-->
+<!--            margin-top: 0.5rem;-->
+<!--        }-->
+
+<!--        /* Empty State */-->
+<!--        .empty-state {-->
+<!--            text-align: center;-->
+<!--            padding: 4rem 2rem;-->
+<!--            border-radius: 16px;-->
+<!--            background: white;-->
+<!--            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);-->
+<!--            margin: 2rem 0;-->
+<!--        }-->
+
+<!--        .empty-state i {-->
+<!--            font-size: 4rem;-->
+<!--            margin-bottom: 1.5rem;-->
+<!--            color: #dee2e6;-->
+<!--            background: var(&#45;&#45;primary-gradient);-->
+<!--            -webkit-background-clip: text;-->
+<!--            -webkit-text-fill-color: transparent;-->
+<!--        }-->
+
+<!--        .empty-state h4 {-->
+<!--            color: var(&#45;&#45;dark-blue);-->
+<!--            font-weight: 600;-->
+<!--            margin-bottom: 0.5rem;-->
+<!--        }-->
+
+<!--        .empty-state p {-->
+<!--            color: #6c757d;-->
+<!--            max-width: 500px;-->
+<!--            margin: 0 auto;-->
+<!--        }-->
+
+<!--        /* Job Count */-->
+<!--        .job-count {-->
+<!--            background: var(&#45;&#45;primary-gradient);-->
+<!--            color: white;-->
+<!--            padding: 8px 16px;-->
+<!--            border-radius: 20px;-->
+<!--            font-weight: 600;-->
+<!--            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);-->
+<!--        }-->
+
+<!--        /* Section Headings */-->
+<!--        .section-heading {-->
+<!--            position: relative;-->
+<!--            display: inline-block;-->
+<!--            color: var(&#45;&#45;dark-blue);-->
+<!--            margin-bottom: 1.5rem;-->
+<!--            font-weight: 700;-->
+<!--        }-->
+
+<!--        .section-heading::after {-->
+<!--            content: '';-->
+<!--            position: absolute;-->
+<!--            bottom: -8px;-->
+<!--            left: 0;-->
+<!--            width: 50px;-->
+<!--            height: 4px;-->
+<!--            background: var(&#45;&#45;primary-gradient);-->
+<!--            border-radius: 2px;-->
+<!--        }-->
+
+<!--        /* Responsive Adjustments */-->
+<!--        @media (max-width: 768px) {-->
+<!--            .resume-card .card-body {-->
+<!--                padding: 1.5rem;-->
+<!--            }-->
+
+<!--            .job-card .card-body {-->
+<!--                padding: 1.5rem;-->
+<!--            }-->
+
+<!--            .match-badge {-->
+<!--                width: 80px;-->
+<!--                height: 80px;-->
+<!--                font-size: 18px;-->
+<!--            }-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--&lt;!&ndash; Animated Background &ndash;&gt;-->
+<!--<div class="bg-animated"></div>-->
+
+<!--&lt;!&ndash; Navbar &ndash;&gt;-->
+<!--<nav class="navbar navbar-expand-lg navbar-dark">-->
+<!--    <div class="container">-->
+<!--        <a class="navbar-brand" href="#">-->
+<!--            <i class="bi bi-file-earmark-person me-2"></i>ResumeMatcher Pro-->
+<!--        </a>-->
+<!--        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">-->
+<!--            <span class="navbar-toggler-icon"></span>-->
+<!--        </button>-->
+<!--        <div class="collapse navbar-collapse" id="navbarNav">-->
+<!--            <div class="navbar-nav ms-auto">-->
+<!--                <a class="nav-link" href="index.html">-->
+<!--                    <i class="bi bi-speedometer2 me-2"></i>Dashboard-->
+<!--                </a>-->
+<!--                <a class="nav-link" href="resume.html">-->
+<!--                    <i class="bi bi-upload me-2"></i>Upload Resume-->
+<!--                </a>-->
+<!--                <a class="nav-link active" href="jobs.html">-->
+<!--                    <i class="bi bi-briefcase me-2"></i>Matched Jobs-->
+<!--                </a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</nav>-->
+
+<!--<main class="container py-4">-->
+<!--    &lt;!&ndash; Loading Animation &ndash;&gt;-->
+<!--    <div id="loadingSpinner" class="loading-container animate__animated animate__fadeIn">-->
+<!--        <div class="spinner-border loading-spinner" role="status">-->
+<!--            <span class="visually-hidden">Loading...</span>-->
+<!--        </div>-->
+<!--        <div class="loading-text animate__animated animate__fadeIn animate__delay-1s">-->
+<!--            Finding the perfect jobs for you-->
+<!--        </div>-->
+<!--        <div class="loading-subtext animate__animated animate__fadeIn animate__delay-2s">-->
+<!--            Analyzing your skills and experience...-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Resume Info Section &ndash;&gt;-->
+<!--    <div id="resumeInfo" class="card mb-4 shadow-sm resume-card d-none animate__animated animate__fadeInUp">-->
+<!--        <div class="card-header">-->
+<!--            <h5 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>Your Professional Profile</h5>-->
+<!--        </div>-->
+<!--        <div class="card-body">-->
+<!--            <div class="row">-->
+<!--                <div class="col-md-6 mb-3">-->
+<!--                    <div class="d-flex align-items-center mb-3">-->
+<!--                        <i class="bi bi-person-circle me-3" style="font-size: 1.5rem; color: var(&#45;&#45;accent-color);"></i>-->
+<!--                        <div>-->
+<!--                            <h6 class="mb-0 text-muted">Full Name</h6>-->
+<!--                            <h4 id="resumeName" class="mb-0" style="color: var(&#45;&#45;dark-blue);">-</h4>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    <div class="d-flex align-items-center mb-3">-->
+<!--                        <i class="bi bi-file-earmark me-3" style="font-size: 1.5rem; color: var(&#45;&#45;accent-color);"></i>-->
+<!--                        <div>-->
+<!--                            <h6 class="mb-0 text-muted">Resume ID</h6>-->
+<!--                            <h5 id="resumeId" class="mb-0" style="color: var(&#45;&#45;dark-blue);">-</h5>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="col-md-6 mb-3">-->
+<!--                    <div class="d-flex align-items-center mb-3">-->
+<!--                        <i class="bi bi-clock-history me-3" style="font-size: 1.5rem; color: var(&#45;&#45;accent-color);"></i>-->
+<!--                        <div>-->
+<!--                            <h6 class="mb-0 text-muted">Experience</h6>-->
+<!--                            <h4 id="resumeExp" class="mb-0" style="color: var(&#45;&#45;dark-blue);">0 years</h4>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <div class="mt-3">-->
+<!--                <h6 class="section-heading">Key Skills</h6>-->
+<!--                <div id="resumeSkills" class="d-flex flex-wrap">-->
+<!--                    <span class="skill-tag">Loading skills...</span>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Job Results Section &ndash;&gt;-->
+<!--    <div id="jobResults" class="d-none">-->
+<!--        <div class="d-flex justify-content-between align-items-center mb-4 animate__animated animate__fadeIn">-->
+<!--            <h4 class="section-heading">Your Job Matches</h4>-->
+<!--            <span class="job-count" id="jobCount">0 jobs</span>-->
+<!--        </div>-->
+
+<!--        <div id="emptyState" class="empty-state animate__animated animate__fadeIn">-->
+<!--            <i class="bi bi-briefcase"></i>-->
+<!--            <h4>No matching jobs found</h4>-->
+<!--            <p>We couldn't find any jobs that match your profile perfectly. Try updating your resume or adjusting your search criteria.</p>-->
+<!--            <button class="btn btn-primary mt-3">-->
+<!--                <i class="bi bi-upload me-2"></i>Upload New Resume-->
+<!--            </button>-->
+<!--        </div>-->
+
+<!--        <div id="jobCards" class="row g-4"></div>-->
+<!--    </div>-->
+<!--</main>-->
+
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--<script>-->
+<!--    document.addEventListener("DOMContentLoaded", () => {-->
+<!--        // Show loading animation-->
+<!--        setTimeout(() => {-->
+<!--            const resumeData = JSON.parse(localStorage.getItem("resumeData"));-->
+
+<!--            if (!resumeData) {-->
+<!--                window.location.href = "resume.html";-->
+<!--                return;-->
+<!--            }-->
+
+<!--            // Hide loading spinner after delay-->
+<!--            document.getElementById('loadingSpinner').classList.add('animate__fadeOut');-->
+
+<!--            // Show resume info with animation-->
+<!--            setTimeout(() => {-->
+<!--                document.getElementById('loadingSpinner').style.display = 'none';-->
+<!--                displayResumeData(resumeData);-->
+
+<!--                // Then fetch jobs after resume is shown-->
+<!--                setTimeout(() => {-->
+<!--                    fetchMatchedJobs(resumeData.id);-->
+<!--                }, 500);-->
+<!--            }, 500);-->
+<!--        }, 2500);-->
+<!--    });-->
+
+<!--    function displayResumeData(resumeData) {-->
+<!--        const resumeInfo = document.getElementById("resumeInfo");-->
+
+<!--        // Populate resume data-->
+<!--        document.getElementById('resumeId').textContent = resumeData.id || "N/A";-->
+<!--        document.getElementById('resumeName').textContent = resumeData.name || "Not specified";-->
+<!--        document.getElementById('resumeExp').textContent = `${resumeData.experience || "0"} years`;-->
+
+<!--        // Format skills as tags-->
+<!--        const skillsContainer = document.getElementById("resumeSkills");-->
+<!--        skillsContainer.innerHTML = '';-->
+
+<!--        if (resumeData.skills && resumeData.skills.length > 0) {-->
+<!--            resumeData.skills.forEach(skill => {-->
+<!--                const skillTag = document.createElement('span');-->
+<!--                skillTag.className = 'skill-tag animate__animated animate__fadeIn';-->
+<!--                skillTag.textContent = skill;-->
+<!--                skillsContainer.appendChild(skillTag);-->
+<!--            });-->
+<!--        } else {-->
+<!--            skillsContainer.innerHTML = '<span class="text-muted">No skills listed</span>';-->
+<!--        }-->
+
+<!--        // Show resume card with animation-->
+<!--        resumeInfo.classList.remove("d-none");-->
+<!--    }-->
+
+<!--    function fetchMatchedJobs(resumeId) {-->
+<!--        // Show loading state for jobs-->
+<!--        document.getElementById('jobResults').classList.remove("d-none");-->
+<!--        document.getElementById('emptyState').classList.remove("d-none");-->
+
+<!--        // Simulate API call with timeout-->
+<!--        setTimeout(() => {-->
+<!--            //This would be replaced with actual API call in production-->
+<!--            fetch(`http://localhost:8080/resumes/${resumeId}/match-jobs`)-->
+<!--               .then(res => res.json())-->
+<!--                .then(jobs => displayJobs(jobs))-->
+<!--                 .catch(err => showError(err));-->
+
+<!--&lt;!&ndash;            // Mock data for demonstration&ndash;&gt;-->
+<!--&lt;!&ndash;            const mockJobs = [&ndash;&gt;-->
+<!--&lt;!&ndash;                {&ndash;&gt;-->
+<!--&lt;!&ndash;                    id: "JOB-001",&ndash;&gt;-->
+<!--&lt;!&ndash;                    title: "Senior Full Stack Developer",&ndash;&gt;-->
+<!--&lt;!&ndash;                    company: "TechCorp Inc.",&ndash;&gt;-->
+<!--&lt;!&ndash;                    location: "Remote",&ndash;&gt;-->
+<!--&lt;!&ndash;                    type: "Full-time",&ndash;&gt;-->
+<!--&lt;!&ndash;                    salary: "$110,000 - $140,000",&ndash;&gt;-->
+<!--&lt;!&ndash;                    experience: "7+ years",&ndash;&gt;-->
+<!--&lt;!&ndash;                    matchPercentage: 92,&ndash;&gt;-->
+<!--&lt;!&ndash;                    fitLevel: "Excellent Fit",&ndash;&gt;-->
+<!--&lt;!&ndash;                    requiredSkills: ["JavaScript", "React", "Node.js", "TypeScript", "AWS", "Docker"],&ndash;&gt;-->
+<!--&lt;!&ndash;                    description: "We're looking for an experienced Full Stack Developer to join our team..."&ndash;&gt;-->
+<!--&lt;!&ndash;                },&ndash;&gt;-->
+<!--&lt;!&ndash;                {&ndash;&gt;-->
+<!--&lt;!&ndash;                    id: "JOB-002",&ndash;&gt;-->
+<!--&lt;!&ndash;                    title: "Frontend Engineer (React)",&ndash;&gt;-->
+<!--&lt;!&ndash;                    company: "Digital Solutions",&ndash;&gt;-->
+<!--&lt;!&ndash;                    location: "New York, NY",&ndash;&gt;-->
+<!--&lt;!&ndash;                    type: "Full-time",&ndash;&gt;-->
+<!--&lt;!&ndash;                    salary: "$95,000 - $125,000",&ndash;&gt;-->
+<!--&lt;!&ndash;                    experience: "5+ years",&ndash;&gt;-->
+<!--&lt;!&ndash;                    matchPercentage: 78,&ndash;&gt;-->
+<!--&lt;!&ndash;                    fitLevel: "Strong Fit",&ndash;&gt;-->
+<!--&lt;!&ndash;                    requiredSkills: ["JavaScript", "React", "Redux", "HTML/CSS", "REST APIs"],&ndash;&gt;-->
+<!--&lt;!&ndash;                    description: "Join our frontend team to build beautiful user experiences..."&ndash;&gt;-->
+<!--&lt;!&ndash;                },&ndash;&gt;-->
+<!--&lt;!&ndash;                {&ndash;&gt;-->
+<!--&lt;!&ndash;                    id: "JOB-003",&ndash;&gt;-->
+<!--&lt;!&ndash;                    title: "Backend Developer (Node.js)",&ndash;&gt;-->
+<!--&lt;!&ndash;                    company: "Cloud Systems",&ndash;&gt;-->
+<!--&lt;!&ndash;                    location: "Remote",&ndash;&gt;-->
+<!--&lt;!&ndash;                    type: "Contract",&ndash;&gt;-->
+<!--&lt;!&ndash;                    salary: "$85 - $100/hr",&ndash;&gt;-->
+<!--&lt;!&ndash;                    experience: "4+ years",&ndash;&gt;-->
+<!--&lt;!&ndash;                    matchPercentage: 65,&ndash;&gt;-->
+<!--&lt;!&ndash;                    fitLevel: "Good Fit",&ndash;&gt;-->
+<!--&lt;!&ndash;                    requiredSkills: ["Node.js", "Express", "MongoDB", "AWS", "Docker"],&ndash;&gt;-->
+<!--&lt;!&ndash;                    description: "Looking for a backend developer to help scale our infrastructure..."&ndash;&gt;-->
+<!--&lt;!&ndash;                }&ndash;&gt;-->
+<!--&lt;!&ndash;            ];&ndash;&gt;-->
+
+<!--            //displayJobs(mockJobs);-->
+<!--        }, 1500);-->
+<!--    }-->
+
+<!--    function displayJobs(jobs) {-->
+<!--        const jobCards = document.getElementById("jobCards");-->
+<!--        const emptyState = document.getElementById("emptyState");-->
+<!--        const jobCount = document.getElementById("jobCount");-->
+
+<!--        jobCards.innerHTML = "";-->
+
+<!--        if (!jobs || jobs.length === 0) {-->
+<!--            emptyState.classList.remove("d-none");-->
+<!--            jobCount.textContent = "0 jobs";-->
+<!--            return;-->
+<!--        }-->
+
+<!--        emptyState.classList.add("d-none");-->
+<!--        jobCount.textContent = `${jobs.length} ${jobs.length === 1 ? 'job' : 'jobs'}`;-->
+
+<!--        jobs.forEach((job, index) => {-->
+<!--            const match = job.matchPercentage.toFixed(0);-->
+<!--            let color = "bg-success";-->
+<!--            if (match < 50) color = "bg-danger";-->
+<!--            else if (match < 75) color = "bg-warning";-->
+
+<!--            const card = document.createElement("div");-->
+<!--            card.className = "col-md-4";-->
+<!--            card.style.setProperty('&#45;&#45;animation-order', index);-->
+
+<!--            // Create skill tags-->
+<!--            let skillTags = '';-->
+<!--            if (job.requiredSkills && job.requiredSkills.length > 0) {-->
+<!--                job.requiredSkills.forEach(skill => {-->
+<!--                    skillTags += `<span class="skill-tag">${skill}</span>`;-->
+<!--                });-->
+<!--            } else {-->
+<!--                skillTags = '<span class="text-muted">No skills specified</span>';-->
+<!--            }-->
+
+<!--            card.innerHTML = `-->
+<!--                <div class="card h-100 job-card">-->
+<!--                    <div class="card-body text-center">-->
+<!--                        <div class="match-badge ${color}">-->
+<!--                            ${match}%-->
+<!--                            <small class="d-block" style="font-size: 0.6rem; opacity: 0.8;">Match</small>-->
+<!--                        </div>-->
+<!--                        <h4 class="card-title mb-2">${job.title}</h4>-->
+<!--                        <p class="text-muted mb-3">-->
+<!--                            <i class="bi bi-building"></i> ${job.company || "N/A"}-->
+<!--                            <span class="mx-2">•</span>-->
+<!--                            <i class="bi bi-geo-alt"></i> ${job.location || "Remote"}-->
+<!--                        </p>-->
+
+<!--                        <div class="mb-4">-->
+<!--                            ${skillTags}-->
+<!--                        </div>-->
+
+<!--                        <div class="mt-auto">-->
+<!--                            <span class="fit-level-badge">-->
+<!--                                <i class="bi bi-arrow-up-right"></i> ${job.fitLevel}-->
+<!--                            </span>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            `;-->
+<!--            jobCards.appendChild(card);-->
+<!--        });-->
+<!--    }-->
+
+<!--    function showError(error) {-->
+<!--        console.error("Error loading matched jobs:", error);-->
+<!--        const emptyState = document.getElementById("emptyState");-->
+<!--        emptyState.classList.remove("d-none");-->
+<!--        emptyState.innerHTML = `-->
+<!--            <i class="bi bi-exclamation-triangle"></i>-->
+<!--            <h4>Error Loading Jobs</h4>-->
+<!--            <p>We encountered an issue while searching for jobs. Please try again later.</p>-->
+<!--            <button class="btn btn-primary mt-3" onclick="window.location.reload()">-->
+<!--                <i class="bi bi-arrow-repeat me-2"></i>Try Again-->
+<!--            </button>-->
+<!--        `;-->
+<!--    }-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerSync  | Smart Job Matching Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-gradient: linear-gradient(to bottom right, #ffffff 0%, #f8f9fa 100%);
+            --dark-blue: #2c3e50;
+            --accent-color: #4a6ee0;
+        }
+
+        body {
+<!--            background: var(&#45;&#45;secondary-gradient);-->
+
+    background: linear-gradient(135deg, #f6f9fc 0%, #e9eff5 100%);
+
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+
+        /* Animated Background */
+        .bg-animated {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: var(--secondary-gradient);
+            overflow: hidden;
+        }
+
+        .bg-animated::before {
+            content: "";
+            position: absolute;
+            width: 300%;
+            height: 300%;
+            top: -100%;
+            left: -50%;
+            background-image:
+                radial-gradient(circle at 30% 30%, rgba(74, 110, 224, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 70% 70%, rgba(102, 126, 234, 0.1) 0%, transparent 20%);
+            animation: rotate 60s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Navbar */
+       .navbar {
+          box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+          background: linear-gradient(90deg, #5a8dee 0%, #6990ff 100%) !important;
+        }
+
+        .navbar-brand {
+          font-weight: 800;
+          font-size: 1.5rem;
+          background: linear-gradient(to right, #fff, #ddd);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+
+
+        .nav-link {
+            font-weight: 500;
+            padding: 0.5rem 1.2rem !important;
+            border-radius: 8px;
+            margin: 0 3px;
+            color: rgba(255, 255, 255, 0.9) !important;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.25);
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+
+
+        /* Main Content */
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Resume Card */
+        .resume-card {
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            background: var(--card-gradient);
+            transform: translateY(0);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            margin-bottom: 2rem;
+        }
+
+        .resume-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .resume-card .card-header {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            padding: 1.2rem 1.5rem;
+            border-bottom: none;
+        }
+
+        .resume-card .card-body {
+            padding: 1.8rem;
+        }
+
+        /* Job Cards */
+        .job-card {
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            background: var(--card-gradient);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            height: 100%;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s forwards;
+            animation-delay: calc(var(--animation-order) * 0.1s);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .job-card:hover {
+
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .job-card .card-body {
+            padding: 1.8rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* Match Badge */
+        .match-badge {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .match-badge.bg-success {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        }
+        .match-badge.bg-warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+        .match-badge.bg-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+
+
+        /* Skills Tags */
+        .skill-tag {
+            display: inline-block;
+            background-color: #f1f3f5;
+            border-radius: 20px;
+            padding: 5px 12px;
+            margin: 4px;
+            font-size: 0.85rem;
+            color: #495057;
+            transition: all 0.2s ease;
+        }
+
+<!--        .job-card:hover .skill-tag {-->
+<!--            background-color: #e9ecef;-->
+<!--            transform: translateY(-2px);-->
+<!--        }-->
+/* 🌟 Enhanced Job Card Appearance */
+.job-card {
+  min-height: 300px;
+  height: 100%;
+}
+.job-card .card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.2rem;
+}
+
+.job-card .card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--dark-blue);
+  margin-bottom: 0.3rem;
+}
+
+.job-card small.text-muted {
+  font-size: 0.9rem;
+}
+
+.job-card .match-badge {
+  font-size: 20px;
+  width: 95px;
+  height: 95px;
+  margin-bottom: 1rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+
+
+}
+.badge.bg-light.text-dark {
+    font-weight: 600; /* change this to 500, 600, 700 etc. */
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background-color: #f1f3f5;
+    color: #333;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+
+}
+
+.job-card .fit-level-badge {
+  margin-top: 1rem;
+  padding: 10px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 30px;
+  background: linear-gradient(to right, #dfe9f3, #f4f5f7);
+  color: var(--accent-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Skills grid layout */
+.job-card .skill-tag {
+ display: inline-block;
+  background-color: #eef2f7;
+  color: #333;
+  margin: 2px 4px;
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid #dee2e6;
+  font-weight: 200;
+}
+
+.job-card .skill-tag:hover {
+  background: #d0e3ff;
+  transform: scale(1.05);
+}
+
+
+        /* Fit Level Badge */
+        .fit-level-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            background: rgba(74, 110, 224, 0.1);
+            color: var(--accent-color);
+            margin-top: auto;
+            align-self: center;
+            transition: all 0.3s ease;
+        }
+
+        .job-card:hover .fit-level-badge {
+            background: rgba(74, 110, 224, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Loading Animation */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 60vh;
+        }
+
+        .loading-spinner {
+            width: 4rem;
+            height: 4rem;
+            border-width: 0.25rem;
+            color: var(--accent-color);
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            color: var(--dark-blue);
+            margin-top: 1.5rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .loading-subtext {
+            color: #6c757d;
+            margin-top: 0.5rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+            margin: 2rem 0;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: #dee2e6;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .empty-state h4 {
+            color: var(--dark-blue);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: #6c757d;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Job Count */
+        .job-count {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Section Headings */
+        .section-heading {
+            position: relative;
+            display: inline-block;
+            color: var(--dark-blue);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .section-heading::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50px;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .resume-card .card-body {
+                padding: 1.5rem;
+            }
+
+            .job-card .card-body {
+                padding: 1.5rem;
+            }
+
+            .match-badge {
+                width: 80px;
+                height: 80px;
+                font-size: 18px;
+            }
+            .job-card {
+  border-radius: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-height: 230px;
+}
+
+<!--.job-card:hover {-->
+<!--  transform: translateY(-5px);-->
+<!--  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);-->
+<!--}-->
+
+.match-circle {
+  width: 70px;
+  height: 70px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.skill-badge {
+  background-color: #e8f0fe;
+  color: #333;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  font-size: 0.75rem;
+  padding: 6px 10px;
+  border-radius: 50px;
+  display: inline-block;
+}
+
+.fit-badge {
+  background-color: #5563DE;
+  color: white;
+  font-size: 0.8rem;
+  padding: 8px 14px;
+  border-radius: 30px;
+}
+
+        }
+    </style>
+</head>
+<body>
+<!-- Animated Background -->
+<div class="bg-animated"></div>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-handshake me-2"></i>CareerSync
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="index.html">
+                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                </a>
+                <a class="nav-link " href="resume.html"><i class="fas fa-file-upload me-1"></i> Upload Resume</a>
+
+                <a class="nav-link active" href="jobs.html"><i class="fas fa-briefcase me-1"></i> Job Matches</a>
+
+
+                <a class="nav-link" href="#"><i class="fas fa-user me-1"></i> Profile</a>
+
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="container py-4">
+    <!-- Loading Animation -->
+    <div id="loadingSpinner" class="loading-container animate__animated animate__fadeIn">
+        <div class="spinner-border loading-spinner" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="loading-text animate__animated animate__fadeIn animate__delay-1s">
+            Finding the perfect jobs for you
+        </div>
+        <div class="loading-subtext animate__animated animate__fadeIn animate__delay-2s">
+            Analyzing your skills and experience...
+        </div>
+    </div>
+
+    <!-- Resume Info Section -->
+    <div id="resumeInfo" class="card mb-4 shadow-sm resume-card d-none animate__animated animate__fadeInUp">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>Your Professional Profile</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-person-circle me-3" style="font-size: 1.5rem; color: var(--accent-color);"></i>
+                        <div>
+                            <h6 class="mb-0 text-muted">Full Name</h6>
+                            <h4 id="resumeName" class="mb-0" style="color: var(--dark-blue);">-</h4>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-file-earmark me-3" style="font-size: 1.5rem; color: var(--accent-color);"></i>
+                        <div>
+                            <h6 class="mb-0 text-muted">Resume ID</h6>
+                            <h5 id="resumeId" class="mb-0" style="color: var(--dark-blue);">-</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-clock-history me-3" style="font-size: 1.5rem; color: var(--accent-color);"></i>
+                        <div>
+                            <h6 class="mb-0 text-muted">Experience</h6>
+                            <h4 id="resumeExp" class="mb-0" style="color: var(--dark-blue);">-</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <h6 class="section-heading">Key Skills</h6>
+                <div id="resumeSkills" class="d-flex flex-wrap">
+                    <span class="skill-tag">Loading skills...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Job Results Section -->
+    <div id="jobResults" class="d-none">
+        <div class="d-flex justify-content-between align-items-center mb-4 animate__animated animate__fadeIn">
+            <h4 class="section-heading">Your Job Matches</h4>
+            <span class="job-count" id="jobCount">0 jobs</span>
+        </div>
+
+        <div id="emptyState" class="empty-state animate__animated animate__fadeIn">
+            <i class="bi bi-briefcase"></i>
+            <h4>No matching jobs found</h4>
+            <p>We couldn't find any jobs that match your profile perfectly. Try updating your resume or adjusting your search criteria.</p>
+            <button class="btn btn-primary mt-3">
+                <i class="bi bi-upload me-2"></i>Upload New Resume
+            </button>
+        </div>
+
+        <div id="jobCards" class="row g-4"></div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // API Configuration - Replace with your actual API endpoint
+    const API_BASE_URL = 'https://your-api-endpoint.com/api';
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Show loading animation
+        setTimeout(() => {
+            const resumeData = JSON.parse(localStorage.getItem("resumeData"));
+
+            if (!resumeData) {
+                window.location.href = "resume.html";
+                return;
+            }
+
+            // Hide loading spinner after delay
+            document.getElementById('loadingSpinner').classList.add('animate__fadeOut');
+
+            // Show resume info with animation
+            setTimeout(() => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                displayResumeData(resumeData);
+
+                // Then fetch jobs after resume is shown
+                setTimeout(() => {
+                    fetchMatchedJobs(resumeData.id);
+                }, 500);
+            }, 500);
+        }, 2500);
+    });
+
+    function displayResumeData(resumeData) {
+        const resumeInfo = document.getElementById("resumeInfo");
+
+        // Populate resume data
+        document.getElementById('resumeId').textContent = resumeData.id || "N/A";
+        document.getElementById('resumeName').textContent = resumeData.name || "Not specified";
+        document.getElementById('resumeExp').textContent = `${resumeData.experience || "0"} years`;
+
+        // Format skills as tags
+        const skillsContainer = document.getElementById("resumeSkills");
+        skillsContainer.innerHTML = '';
+
+        if (resumeData.skills && resumeData.skills.length > 0) {
+            resumeData.skills.forEach(skill => {
+                const skillTag = document.createElement('span');
+                skillTag.className = 'skill-tag animate__animated animate__fadeIn';
+                skillTag.textContent = skill;
+                skillsContainer.appendChild(skillTag);
+            });
+        } else {
+            skillsContainer.innerHTML = '<span class="text-muted">No skills listed</span>';
+        }
+
+        // Show resume card with animation
+        resumeInfo.classList.remove("d-none");
+    }
+
+<!--    async function fetchMatchedJobs(resumeId) {-->
+<!--        // Show loading state for jobs-->
+<!--        document.getElementById('jobResults').classList.remove("d-none");-->
+<!--        document.getElementById('emptyState').classList.remove("d-none");-->
+
+<!--        try {-->
+<!--            // Make API call to fetch matched jobs-->
+<!--            const response = await fetch(`${API_BASE_URL}/resumes/${resumeId}/match-jobs`, {-->
+<!--                method: 'GET',-->
+<!--                headers: {-->
+<!--                    'Content-Type': 'application/json'-->
+<!--                }-->
+<!--            });-->
+
+<!--            if (!response.ok) {-->
+<!--                throw new Error(`HTTP error! status: ${response.status}`);-->
+<!--            }-->
+
+<!--            const jobs = await response.json();-->
+<!--            displayJobs(jobs);-->
+<!--        } catch (error) {-->
+<!--            console.error("Error fetching matched jobs:", error);-->
+<!--            showError(error);-->
+<!--        }-->
+<!--    }-->
+
+<!--    function getAuthToken() {-->
+<!--        // Retrieve authentication token from localStorage or cookies-->
+<!--        return localStorage.getItem('authToken') || '';-->
+<!--    }-->
+async function fetchMatchedJobs(resumeId) {
+    // Show loading state for jobs
+    document.getElementById('jobResults').classList.remove("d-none");
+    document.getElementById('emptyState').classList.remove("d-none");
+
+    try {
+        // ✅ Simple GET request without Authorization header
+        const response = await fetch(`http://localhost:8080/resumes/${resumeId}/match-jobs`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const jobs = await response.json();
+        displayJobs(jobs);  // your function to render job cards
+    } catch (error) {
+        console.error("❌ Error fetching matched jobs:", error);
+        showError(error);  // optionally show error in UI
+    }
+}
+
+
+    function displayJobs(jobs) {
+        const jobCards = document.getElementById("jobCards");
+        const emptyState = document.getElementById("emptyState");
+        const jobCount = document.getElementById("jobCount");
+
+        jobCards.innerHTML = "";
+
+        if (!jobs || jobs.length === 0) {
+            emptyState.classList.remove("d-none");
+            jobCount.textContent = "0 jobs";
+            return;
+        }
+
+        emptyState.classList.add("d-none");
+        jobCount.textContent = `${jobs.length} ${jobs.length === 1 ? 'job' : 'jobs'}`;
+
+<!--        jobs.forEach((job, index) => {-->
+<!--            const match = job.matchPercentage ? job.matchPercentage.toFixed(0) : 0;-->
+<!--            let color = "bg-success";-->
+<!--            if (match < 50) color = "bg-danger";-->
+<!--            else if (match < 75) color = "bg-warning";-->
+
+<!--            const card = document.createElement("div");-->
+<!--            card.className = "col-md-4";-->
+<!--            card.style.setProperty('&#45;&#45;animation-order', index);-->
+
+<!--            // Create skill tags-->
+<!--            let skillTags = '';-->
+<!--            if (job.requiredSkills && job.requiredSkills.length > 0) {-->
+<!--                job.requiredSkills.forEach(skill => {-->
+<!--                    skillTags += `<span class="skill-tag">${skill}</span>`;-->
+<!--                });-->
+<!--            } else if (job.skills) { // Alternative field name-->
+<!--                job.skills.forEach(skill => {-->
+<!--                    skillTags += `<span class="skill-tag">${skill}</span>`;-->
+<!--                });-->
+<!--            } else {-->
+<!--                skillTags = '<span class="text-muted">No skills specified</span>';-->
+<!--            }-->
+
+<!--            // Determine fit level based on match percentage-->
+<!--            let fitLevel = "Good Fit";-->
+<!--            if (match >= 85) fitLevel = "Excellent Fit";-->
+<!--            else if (match >= 70) fitLevel = "Strong Fit";-->
+<!--            else if (match < 50) fitLevel = "Partial Fit";-->
+
+<!--            card.innerHTML = `-->
+<!--                <div class="card h-100 job-card">-->
+<!--                    <div class="card-body text-center">-->
+<!--                        <div class="match-badge ${color}">-->
+<!--                            ${match}%-->
+<!--                            <small class="d-block" style="font-size: 0.6rem; opacity: 0.8;">Match</small>-->
+<!--                        </div>-->
+<!--                        <h4 class="card-title mb-2">${job.title || 'Job Title Not Specified'}</h4>-->
+<!--                        <p class="text-muted mb-3">-->
+<!--                            <i class="bi bi-building"></i> ${job.company || "Company Not Specified"}-->
+<!--                            <span class="mx-2">•</span>-->
+<!--                            <i class="bi bi-geo-alt"></i> ${job.location || "Location Not Specified"}-->
+<!--                        </p>-->
+
+<!--                        <div class="mb-4">-->
+<!--                            ${skillTags}-->
+<!--                        </div>-->
+
+<!--                        <div class="mt-auto">-->
+<!--                            <span class="fit-level-badge">-->
+<!--                                <i class="bi bi-arrow-up-right"></i> ${job.fitLevel || fitLevel}-->
+<!--                            </span>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            `;-->
+<!--            jobCards.appendChild(card);-->
+<!--        });-->
+jobs.forEach((job, index) => {
+    const match = job.matchPercentage ? job.matchPercentage.toFixed(0) : 0;
+
+    // Determine match badge color
+    let color = "bg-success";
+    if (match < 50) color = "bg-danger";
+    else if (match < 75) color = "bg-warning";
+
+    // Create job card container
+    const card = document.createElement("div");
+    card.className = "col-md-6 col-lg-4 d-flex";
+    card.style.animationDelay = `${index * 100}ms`;
+
+    // Build skill tags
+    let skillTags = '';
+    if (job.requiredSkills && job.requiredSkills.length > 0) {
+        job.requiredSkills.forEach(skill => {
+            skillTags += `<span class="badge bg-light text-dark me-1 mb-1">${skill}</span>`;
+        });
+    } else if (job.skills) {
+        job.skills.forEach(skill => {
+            skillTags += `<span class="badge bg-light text-dark me-1 mb-1">${skill}</span>`;
+        });
+    } else {
+        skillTags = '<span class="text-muted">No skills specified</span>';
+    }
+
+    // Determine fit level
+    let fitLevel = "Good Fit";
+    if (match >= 85) fitLevel = "Excellent Fit";
+    else if (match >= 70) fitLevel = "Strong Fit";
+    else if (match < 50) fitLevel = "Partial Fit";
+
+    card.innerHTML = `
+        <div class="card job-card shadow-lg w-100 p-3 bg-white text-dark rounded-4">
+            <div class="card-body d-flex flex-column align-items-center">
+                <div class="match-badge ${color} mb-3" style="width: 90px; height: 90px; font-size: 22px;">
+                    ${match}%
+                    <small class="d-block" style="font-size: 0.6rem;">Match</small>
+                </div>
+                <h4 class="card-title text-center mb-2">${job.title || 'Job Title Not Specified'}</h4>
+                <p class="text-muted mb-3 text-center">
+                    <i class="bi bi-building"></i> ${job.company || "Company Not Specified"}<br>
+                    <i class="bi bi-geo-alt"></i> ${job.location || "Location Not Specified"}
+                </p>
+                <div class="mb-3 text-center">
+                    ${skillTags}
+                </div>
+<span class="badge rounded-pill px-3 py-2 mt-auto" style="background-color: #e0e0e0; color: #333; font-weight: 600; font-size: 0.9rem;">
+    ${job.fitLevel || fitLevel}
+</span>
+
+            <a href="#" class="btn btn-outline-primary rounded-pill px-4 py-2 mt-auto fw-semibold shadow-sm">
+                 Apply Now
+            </a>
+            </div>
+        </div>
+    `;
+
+    document.getElementById("jobCards").appendChild(card);
+});
+
+    }
+
+    function showError(error) {
+        console.error("Error loading matched jobs:", error);
+        const emptyState = document.getElementById("emptyState");
+        emptyState.classList.remove("d-none");
+        emptyState.innerHTML = `
+            <i class="bi bi-exclamation-triangle"></i>
+            <h4>Error Loading Jobs</h4>
+            <p>We encountered an issue while searching for jobs. Please try again later.</p>
+            <button class="btn btn-primary mt-3" onclick="window.location.reload()">
+                <i class="bi bi-arrow-repeat me-2"></i>Try Again
+            </button>
+        `;
+    }
+</script>
+</body>
+</html>
